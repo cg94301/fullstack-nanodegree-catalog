@@ -4,8 +4,7 @@
       <div class="row">
         <div class="col-sm-12 header">
           <div class="row">
-            <div class="col-sm-6">Catalog App
-            </div>
+            <div class="col-sm-6 catalog">Catalog App</div>
             <div class="col-sm-6">
               <a class="btn btn-danger pull-right" href="#" role="button">LOGIN</a>
             </div>
@@ -16,15 +15,25 @@
         <div class="col-sm-4 varietals">
           <h3>Varietals</h3>
           <div class="row">
-            <div class="col-sm-12 selected-varietal">
-              {{varietal.name}}
+            <div class="col-sm-12">
+              {% for varietal in varietals %}
+              <a href="{{url_for('showWines', varietal_id=varietal.id)}}">
+                <div>{{varietal.name}}</div>
+              </a>
+              {% endfor %}
             </div>
           </div>
         </div>
         <div class="col-sm-8">
-          <h3>Selection</h3>
+          <h3><span class="selected-varietal">{{varietal.name}}</span> Selection</h3>
           {% for wine in wines %}
-          <div>{{wine.name}} {{wine.year}}</div>
+          <div>
+            {{wine.name}} {{wine.year}}
+          </div>
+          <div>
+            <img src="{{url_for('static', filename=wine.label)}}" alt="{{wine.name}}" style="width:120px;height:120px;">
+          </div>
+          <br>
           {% endfor %}
         </div>
       </div>

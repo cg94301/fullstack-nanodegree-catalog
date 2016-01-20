@@ -17,6 +17,7 @@ class Wine(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
     year = Column(Integer)
+    label = Column(String(250))
     description = Column(String)
     varietal_id = Column(Integer, ForeignKey('varietal.id'))
     varietal = relationship(Varietal)

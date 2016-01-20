@@ -14,16 +14,20 @@ session = DBSession()
 # Show all categories
 @app.route('/')
 @app.route('/catalog/')
-def showVarietals():
+def showCatalog():
     varietals = session.query(Varietal).all()
-    return render_template('catalog.html', varietals=varietals)
+    varietalcount = session.query(Varietal).count()
+    wines = session.query(Wine).order_by(Wine.id.desc()).limit(varietalcount)
+    return render_template('catalog.html', varietals=varietals, wines=wines)
 
 @app.route('/catalog/<int:varietal_id>/')
 @app.route('/catalog/<int:varietal_id>/wines/')
 def showWines(varietal_id):
-    varietal = session.query(Varietal).filter_by(id=varietal_id).one()
+    #varietals = session.query(Varietal).filter(Varietal.id != varietal_id).all()
+    varietals = session.query(Varietal).all()
+    varietal = session.query(Varietal).filter_by(id = varietal_id).one()
     wines = session.query(Wine).filter_by(varietal_id=varietal_id).all()
-    return render_template('wines.html', varietal=varietal, wines=wines)
+    return render_template('wines.html', varietals=varietals, varietal=varietal, wines=wines)
 
 if __name__ == '__main__':
     app.debug = True
