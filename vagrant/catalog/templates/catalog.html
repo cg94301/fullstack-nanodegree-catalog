@@ -24,7 +24,7 @@
         <div class="col-sm-8">
           <h3>Latest Wines</h3>
           {% for wine in wines %}
-          <div>{{wine.name}} <i><span class="selected-varietal">({{wine.varietal.name}})<span></i></div>
+          <div>{{wine.name}} {{wine.year}} <i><span class="selected-varietal">({{wine.varietal.name}})<span></i></div>
           {% endfor %}
         </div>
       </div>
