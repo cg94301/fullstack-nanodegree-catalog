@@ -1,13 +1,29 @@
 from flask import Flask, render_template, url_for
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from dbinit import Base, Varietal, Wine
+
 app = Flask(__name__)
 
+engine = create_engine('sqlite:///redwines.db')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
 
 # Show all categories
 @app.route('/')
-@app.route('/categories/')
-def showCategories():
-    return render_template('categories.html')
+@app.route('/catalog/')
+def showVarietals():
+    varietals = session.query(Varietal).all()
+    return render_template('catalog.html', varietals=varietals)
+
+@app.route('/catalog/<int:varietal_id>/')
+@app.route('/catalog/<int:varietal_id>/wines/')
+def showWines(varietal_id):
+    varietal = session.query(Varietal).filter_by(id=varietal_id).one()
+    wines = session.query(Wine).filter_by(varietal_id=varietal_id).all()
+    return render_template('wines.html', varietal=varietal, wines=wines)
 
 if __name__ == '__main__':
     app.debug = True

@@ -13,11 +13,16 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-sm-4">
-          <h3>Categories</h3>
+        <div class="col-sm-4 varietals">
+          <h3>Varietals</h3>
+          {% for varietal in varietals %}
+          <a href="{{url_for('showWines', varietal_id=varietal.id)}}">
+            <div>{{varietal.name}}</div>
+          </a>
+          {% endfor %}
         </div>
         <div class="col-sm-8">
-          <h3>Latest Items</h3>
+          <h3>Latest Wines</h3>
         </div>
       </div>
 
