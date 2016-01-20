@@ -5,10 +5,6 @@
     padding: 1em;
 }
 
-.varietals {
-    border-right: 10px #888;
-}
-
 .selected-varietal {
     color: red;
 }

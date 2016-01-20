@@ -29,6 +29,11 @@ def showWines(varietal_id):
     wines = session.query(Wine).filter_by(varietal_id=varietal_id).all()
     return render_template('wines.html', varietals=varietals, varietal=varietal, wines=wines)
 
+@app.route('/catalog/wine/<int:wine_id>/')
+def showWine(wine_id):
+    wine = session.query(Wine).filter_by(id=wine_id).one()
+    return render_template('description.html', wine=wine)
+
 if __name__ == '__main__':
     app.debug = True
     app.run(host='0.0.0.0', port=5000)

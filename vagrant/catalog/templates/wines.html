@@ -28,7 +28,9 @@
           <h3><span class="selected-varietal">{{varietal.name}}</span> Selection</h3>
           {% for wine in wines %}
           <div>
-            {{wine.name}} {{wine.year}}
+            <a href="{{url_for('showWine', wine_id=wine.id)}}">
+              {{wine.name}} {{wine.year}}
+            </a>
           </div>
           <div>
             <img src="{{url_for('static', filename=wine.label)}}" alt="{{wine.name}}" style="width:120px;height:120px;">
