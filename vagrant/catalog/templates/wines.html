@@ -1,0 +1,32 @@
+{% extends "main.html" %}
+{% block content %}
+
+      <div class="row">
+        <div class="col-sm-12 header">
+          <div class="row">
+            <div class="col-sm-6">Catalog App
+            </div>
+            <div class="col-sm-6">
+              <a class="btn btn-danger pull-right" href="#" role="button">LOGIN</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4 varietals">
+          <h3>Varietals</h3>
+          <div class="row">
+            <div class="col-sm-12 selected-varietal">
+              {{varietal.name}}
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-8">
+          <h3>Selection</h3>
+          {% for wine in wines %}
+          <div>{{wine.name}} {{wine.year}}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+{% endblock %}
