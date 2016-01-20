@@ -27,7 +27,8 @@ def showWines(varietal_id):
     varietals = session.query(Varietal).all()
     varietal = session.query(Varietal).filter_by(id = varietal_id).one()
     wines = session.query(Wine).filter_by(varietal_id=varietal_id).all()
-    return render_template('wines.html', varietals=varietals, varietal=varietal, wines=wines)
+    count = session.query(Wine).filter_by(varietal_id=varietal_id).count()
+    return render_template('wines.html', varietals=varietals, varietal=varietal, wines=wines, count=count)
 
 @app.route('/catalog/wine/<int:wine_id>/')
 def showWine(wine_id):

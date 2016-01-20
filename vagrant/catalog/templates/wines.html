@@ -25,7 +25,7 @@
           </div>
         </div>
         <div class="col-sm-8">
-          <h3><span class="selected-varietal">{{varietal.name}}</span> Selection</h3>
+          <h3><span class="selected-varietal">{{varietal.name}}</span> Selection ({{count}})</h3>
           {% for wine in wines %}
           <div>
             <a href="{{url_for('showWine', wine_id=wine.id)}}">
