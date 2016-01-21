@@ -1,0 +1,48 @@
+{% extends "main.html" %}
+{% block content %}
+
+      <div class="row">
+        <div class="col-sm-12 header">
+          <div class="row">
+            <div class="col-sm-6 catalog">Catalog App</div>
+            <div class="col-sm-6">
+              <a class="btn btn-danger pull-right" href="#" role="button">LOGIN</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+          <h3>Add New Wine</h3>
+
+          <!-- Every input MUST have a name -->
+          <form action="#" method="post">
+
+            <br>
+            <label for="varietal">VARIETAL</label>
+            <select class="form-control" name="varietal">
+              {% for v in varietals %}
+              <option>{{v.name}}</option>
+              {% endfor %}
+            </select>
+            <br>
+            <label for="name">NAME</label>
+            <input type="text" class="form-control" maxlength="100" name="name">
+            <br>
+            <label for="year">YEAR</label>
+            <input type="text" class="form-control" maxlength="4" name="year">
+            <br>
+            <label for="description">DESCRIPTION</label>
+            <textarea class="form-control" rows="3" name="description"></textarea>
+            <br>
+            <button class="btn btn-success" type="submit" value="Submit">Submit</button>
+            
+          </form>
+        </div>
+      </div>
+
+
+
+{% endblock %}
