@@ -41,11 +41,44 @@ def addWine():
         print "POST"
         print request.form
         varietal = session.query(Varietal).filter_by(name=request.form['varietal']).one()
-        newWine = Wine(name=request.form['name'], year=request.form['year'], varietal_id=varietal.id)
-        return redirect(url_for('addWine'))
+        newWine = Wine(name=request.form['name'], year=request.form['year'], description=request.form['description'],
+                       label=request.form['label'],varietal_id=varietal.id)
+        session.add(newWine)
+        session.commit()
+        return redirect(url_for('showCatalog'))
     else:
         varietals = session.query(Varietal).all()
         return render_template('addwine.html', varietals=varietals)
+
+@app.route('/catalog/wine/<int:wine_id>/edit/', methods=['GET', 'POST'])
+def editWine(wine_id):
+    varietals = session.query(Varietal).all()
+    wine = session.query(Wine).filter_by(id = wine_id).one()
+    if request.method == 'POST':
+        if request.form['name']:
+            wine.name = request.form['name']
+        if request.form['year']:
+            wine.year = request.form['year']
+        if request.form['label']:
+            wine.label = request.form['label']
+        if request.form['description']:
+            wine.description = request.form['description']
+        session.add(wine)
+        session.commit()
+        return redirect(url_for('showWine', wine_id=wine_id))
+    else:
+        return render_template('editwine.html', varietals=varietals, wine=wine)
+
+@app.route('/catalog/wine/<int:wine_id>/delete/', methods=['GET', 'POST'])
+def deleteWine(wine_id):
+    wine = session.query(Wine).filter_by(id = wine_id).one()
+    print request.form
+    if request.method == 'POST':
+        session.delete(wine)
+        session.commit()
+        return redirect(url_for('showCatalog'))
+    else:
+        return render_template('deletewine.html', wine=wine)
 
 if __name__ == '__main__':
     app.debug = True

@@ -15,7 +15,7 @@
       <div class="row">
         <div class="col-sm-2"></div>
         <div class="col-sm-8">
-          <h3>Add New Wine</h3>
+          <h3>Edit Wine</h3>
 
           <!-- Every input MUST have a name -->
           <form action="#" method="post">
@@ -24,21 +24,25 @@
             <label for="varietal">VARIETAL</label>
             <select class="form-control" name="varietal">
               {% for v in varietals %}
+              {% if v.id == wine.varietal_id %}
+              <option selected>{{v.name}}</option>
+              {% else %}
               <option>{{v.name}}</option>
+              {% endif %}
               {% endfor %}
             </select>
             <br>
             <label for="name">NAME</label>
-            <input type="text" class="form-control" maxlength="100" name="name">
+            <input type="text" class="form-control" maxlength="100" name="name" value="{{wine.name}}">
             <br>
             <label for="year">YEAR</label>
-            <input type="text" class="form-control" maxlength="4" name="year">
+            <input type="text" class="form-control" maxlength="4" name="year" value="{{wine.year}}">
             <br>
             <label for="label">LABEL PICTURE (file name)</label>
-            <input type="text" class="form-control" maxlength="100" name="label" value="bottle.png">
+            <input type="text" class="form-control" maxlength="100" name="label" value="{{wine.label}}">
             <br>
             <label for="description">DESCRIPTION</label>
-            <textarea class="form-control" rows="3" name="description"></textarea>
+            <textarea class="form-control" rows="3" name="description">{{wine.description}}</textarea>
             <br>
             <button class="btn btn-success" type="submit" value="Submit">Submit</button>
             

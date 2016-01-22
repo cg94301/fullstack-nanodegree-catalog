@@ -26,6 +26,7 @@
           {% for wine in wines %}
           <div>{{wine.name}} {{wine.year}} <i><span class="selected-varietal">({{wine.varietal.name}})<span></i></div>
           {% endfor %}
+          <a class="modify" href="{{url_for('addWine')}}"><u>Add</u> </a>
         </div>
       </div>
 
