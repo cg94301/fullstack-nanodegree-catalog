@@ -22,7 +22,7 @@
             <button type="submit" class="btn btn-warning delete" id="submit" type="submit">Delete</button>
           </form>
           <br>
-          <a href="{{url_for('showWines', varietal_id=wine.varietal.id)}}">Back to {{wine.varietal.name}}</a>
+          <a class="cancel" href="{{url_for('showWine', wine_id=wine.id)}}">Cancel</a>
         </div>
         <div class="col-sm-2"></div>
       </div>
