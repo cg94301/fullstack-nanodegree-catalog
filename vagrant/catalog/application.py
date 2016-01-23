@@ -208,6 +208,8 @@ def showWine(wine_id):
 
 @app.route('/catalog/add/', methods=['GET', 'POST'])
 def addWine():
+    if not checkLogin():
+        return redirect('/login/')
     if request.method == 'POST':
         print "POST"
         print request.form
@@ -223,6 +225,8 @@ def addWine():
 
 @app.route('/catalog/wine/<int:wine_id>/edit/', methods=['GET', 'POST'])
 def editWine(wine_id):
+    if not checkLogin():
+        return redirect('/login/')
     varietals = session.query(Varietal).all()
     wine = session.query(Wine).filter_by(id = wine_id).one()
     if request.method == 'POST':
@@ -242,6 +246,8 @@ def editWine(wine_id):
 
 @app.route('/catalog/wine/<int:wine_id>/delete/', methods=['GET', 'POST'])
 def deleteWine(wine_id):
+    if not checkLogin():
+        return redirect('/login/')
     wine = session.query(Wine).filter_by(id = wine_id).one()
     print request.form
     if request.method == 'POST':
