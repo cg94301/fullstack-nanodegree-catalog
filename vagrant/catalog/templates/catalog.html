@@ -17,7 +17,7 @@
           <div>{{wine.name}} {{wine.year}} <i><span class="selected-varietal">({{wine.varietal.name}})<span></i></div>
           {% endfor %}
           {% if loginOK %}
-          <a class="modify" href="{{url_for('addWine')}}"><u>Add</u> </a>
+          <a class="modify" href="{{url_for('addWine')}}"><u>Add wine</u> </a>
           {% endif %}
         </div>
       </div>
