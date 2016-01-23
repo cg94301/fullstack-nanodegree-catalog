@@ -25,6 +25,12 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+def checkLogin():
+    if 'username' in login_session:
+        return True
+    else:
+        return False
+
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -131,6 +137,44 @@ def gconnect():
     print "done!"
     return output
 
+@app.route('/gdisconnect/')
+def gdisconnect():
+    print "disconnect"
+    print "login_session: "
+    print login_session
+    #access_token = login_session['access_token']
+    access_token = login_session['credentials']
+    print 'In gdisconnect access token is %s', access_token
+    print 'User name is: ' 
+    print login_session['username']
+    if access_token is None:
+ 	print 'Access Token is None'
+    	response = make_response(json.dumps('Current user not connected.'), 401)
+    	response.headers['Content-Type'] = 'application/json'
+    	return response
+    #url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    print "access token:"
+    print login_session['credentials']
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['credentials']
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[0]
+    print 'result is '
+    print result
+    if result['status'] == '200':
+	#del login_session['access_token'] 
+	del login_session['credentials'] 
+    	del login_session['gplus_id']
+    	del login_session['username']
+    	del login_session['email']
+    	del login_session['picture']
+    	response = make_response(json.dumps('Successfully disconnected.'), 200)
+    	response.headers['Content-Type'] = 'application/json'
+    	return redirect(url_for('showCatalog'))
+    else:
+    	response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+    	response.headers['Content-Type'] = 'application/json'
+    	return response
+
 @app.route('/login/')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
@@ -145,7 +189,7 @@ def showCatalog():
     varietals = session.query(Varietal).all()
     varietalcount = session.query(Varietal).count()
     wines = session.query(Wine).order_by(Wine.id.desc()).limit(varietalcount)
-    return render_template('catalog.html', varietals=varietals, wines=wines)
+    return render_template('catalog.html', varietals=varietals, wines=wines, loginOK=checkLogin())
 
 @app.route('/catalog/<int:varietal_id>/')
 @app.route('/catalog/<int:varietal_id>/wines/')
@@ -155,12 +199,12 @@ def showWines(varietal_id):
     varietal = session.query(Varietal).filter_by(id = varietal_id).one()
     wines = session.query(Wine).filter_by(varietal_id=varietal_id).all()
     count = session.query(Wine).filter_by(varietal_id=varietal_id).count()
-    return render_template('wines.html', varietals=varietals, varietal=varietal, wines=wines, count=count)
+    return render_template('wines.html', varietals=varietals, varietal=varietal, wines=wines, count=count, loginOK=checkLogin())
 
 @app.route('/catalog/wine/<int:wine_id>/')
 def showWine(wine_id):
     wine = session.query(Wine).filter_by(id=wine_id).one()
-    return render_template('description.html', wine=wine)
+    return render_template('description.html', wine=wine, loginOK=checkLogin())
 
 @app.route('/catalog/add/', methods=['GET', 'POST'])
 def addWine():
@@ -175,7 +219,7 @@ def addWine():
         return redirect(url_for('showCatalog'))
     else:
         varietals = session.query(Varietal).all()
-        return render_template('addwine.html', varietals=varietals)
+        return render_template('addwine.html', varietals=varietals, loginOK=checkLogin())
 
 @app.route('/catalog/wine/<int:wine_id>/edit/', methods=['GET', 'POST'])
 def editWine(wine_id):
@@ -194,7 +238,7 @@ def editWine(wine_id):
         session.commit()
         return redirect(url_for('showWine', wine_id=wine_id))
     else:
-        return render_template('editwine.html', varietals=varietals, wine=wine)
+        return render_template('editwine.html', varietals=varietals, wine=wine, loginOK=checkLogin())
 
 @app.route('/catalog/wine/<int:wine_id>/delete/', methods=['GET', 'POST'])
 def deleteWine(wine_id):
@@ -205,7 +249,7 @@ def deleteWine(wine_id):
         session.commit()
         return redirect(url_for('showCatalog'))
     else:
-        return render_template('deletewine.html', wine=wine)
+        return render_template('deletewine.html', wine=wine, loginOK=checkLogin())
 
 if __name__ == '__main__':
     app.secret_key = 'catalog_secret_key'

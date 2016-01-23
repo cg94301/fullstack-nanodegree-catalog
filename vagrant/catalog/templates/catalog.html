@@ -1,17 +1,7 @@
 {% extends "main.html" %}
 {% block content %}
+{% include "header.html" %}
 
-      <div class="row">
-        <div class="col-sm-12 header">
-          <div class="row">
-            <div class="col-sm-6">Catalog App
-            </div>
-            <div class="col-sm-6">
-              <a class="btn btn-danger pull-right" href="#" role="button">LOGIN</a>
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="row">
         <div class="col-sm-4 varietals">
           <h3>Varietals</h3>
@@ -26,7 +16,9 @@
           {% for wine in wines %}
           <div>{{wine.name}} {{wine.year}} <i><span class="selected-varietal">({{wine.varietal.name}})<span></i></div>
           {% endfor %}
+          {% if loginOK %}
           <a class="modify" href="{{url_for('addWine')}}"><u>Add</u> </a>
+          {% endif %}
         </div>
       </div>
 

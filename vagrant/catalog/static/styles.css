@@ -4,6 +4,9 @@
     color: white;
     padding: 1em;
 }
+.header a {
+    color: white;
+}
 
 .selected-varietal {
     color: red;
