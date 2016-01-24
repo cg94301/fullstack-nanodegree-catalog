@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect, flash
+from flask import Flask, render_template, url_for, request, redirect, jsonify
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -161,7 +161,6 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
     print "login_session: "
     print login_session
     print "done!"
@@ -221,6 +220,14 @@ def showCatalog():
     wines = session.query(Wine).order_by(Wine.id.desc()).limit(varietalcount)
     return render_template('catalog.html', varietals=varietals, wines=wines, loginOK=checkLogin())
 
+@app.route('/catalog/JSON/')
+def catalogJSON():
+    varietalsobj = session.query(Varietal).all()
+    print varietalsobj
+    varietals=[i.serialize for i in varietalsobj]
+    print varietals
+    return jsonify(varietals=[i.serialize for i in varietalsobj])
+
 @app.route('/catalog/<int:varietal_id>/')
 @app.route('/catalog/<int:varietal_id>/wines/')
 def showWines(varietal_id):
@@ -231,10 +238,20 @@ def showWines(varietal_id):
     count = session.query(Wine).filter_by(varietal_id=varietal_id).count()
     return render_template('wines.html', varietals=varietals, varietal=varietal, wines=wines, count=count, loginOK=checkLogin())
 
+@app.route('/catalog/<int:varietal_id>/wines/JSON/')
+def winesJSON(varietal_id):
+    winesobj = session.query(Wine).filter_by(varietal_id=varietal_id).all()
+    return jsonify(wines=[i.serialize for i in winesobj])
+
 @app.route('/catalog/wine/<int:wine_id>/')
 def showWine(wine_id):
     wine = session.query(Wine).filter_by(id=wine_id).one()
     return render_template('description.html', wine=wine, loginOK=checkLogin(), loginUserOK=checkLoginUser(wine))
+
+@app.route('/catalog/wine/<int:wine_id>/JSON/')
+def wineJSON(wine_id):
+    wineobj = session.query(Wine).filter_by(id=wine_id).one()
+    return jsonify(wine=wineobj.serialize)
 
 @app.route('/catalog/add/', methods=['GET', 'POST'])
 def addWine():

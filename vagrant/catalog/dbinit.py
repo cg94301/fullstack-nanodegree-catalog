@@ -19,6 +19,14 @@ class Varietal(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
 
+    @property
+    def serialize(self):
+       """Return object data in easily serializeable format"""
+       return {
+           'id' : self.id,
+           'name' : self.name,
+       }
+
 class Wine(Base):
     __tablename__='wine'
     
@@ -31,6 +39,19 @@ class Wine(Base):
     varietal = relationship(Varietal)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+
+    @property
+    def serialize(self):
+       """Return object data in easily serializeable format"""
+       return {
+           'id' : self.id,
+           'name' : self.name,
+           'year' : self.year,
+           'description' : self.description,
+           'label' : self.label,
+           'varietal_id' : self.varietal_id,
+       }
+
 
 engine = create_engine('sqlite:///redwines.db')
 Base.metadata.create_all(engine)
