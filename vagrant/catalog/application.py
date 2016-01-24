@@ -2,7 +2,7 @@ from flask import Flask, render_template, url_for, request, redirect, flash
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from dbinit import Base, Varietal, Wine
+from dbinit import Base, Varietal, Wine, User
 
 # imports for authentication
 from flask import session as login_session
@@ -30,6 +30,36 @@ def checkLogin():
         return True
     else:
         return False
+
+def checkLoginUser(wine):
+    creator = getUserInfo(wine.user_id)
+    if 'username' in login_session and creator.id == login_session['user_id']:
+        return True
+    else:
+        return False
+
+# User Helper Functions
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session['email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+    
+def getUserInfo(user_id):
+    users = session.query(User).all()
+    names = [(u.name, u.id) for u in users]
+    print names
+    print user_id
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -119,10 +149,10 @@ def gconnect():
     login_session['email'] = data['email']
 
     # See if a user exists, if it doesn't make a new one
-    #user_id = getUserID(login_session['email'])
-    #if not user_id:
-    #    user_id = createUser(login_session)
-    #login_session['user_id'] = user_id
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
 
     output = ''
     output += '<h1>Welcome, '
@@ -204,7 +234,7 @@ def showWines(varietal_id):
 @app.route('/catalog/wine/<int:wine_id>/')
 def showWine(wine_id):
     wine = session.query(Wine).filter_by(id=wine_id).one()
-    return render_template('description.html', wine=wine, loginOK=checkLogin())
+    return render_template('description.html', wine=wine, loginOK=checkLogin(), loginUserOK=checkLoginUser(wine))
 
 @app.route('/catalog/add/', methods=['GET', 'POST'])
 def addWine():
@@ -215,7 +245,7 @@ def addWine():
         print request.form
         varietal = session.query(Varietal).filter_by(name=request.form['varietal']).one()
         newWine = Wine(name=request.form['name'], year=request.form['year'], description=request.form['description'],
-                       label=request.form['label'],varietal_id=varietal.id)
+                       label=request.form['label'],varietal_id=varietal.id, user_id=login_session['user_id'])
         session.add(newWine)
         session.commit()
         return redirect(url_for('showCatalog'))
@@ -225,11 +255,16 @@ def addWine():
 
 @app.route('/catalog/wine/<int:wine_id>/edit/', methods=['GET', 'POST'])
 def editWine(wine_id):
-    if not checkLogin():
+    wine = session.query(Wine).filter_by(id = wine_id).one()
+    if not checkLoginUser(wine):
         return redirect('/login/')
     varietals = session.query(Varietal).all()
-    wine = session.query(Wine).filter_by(id = wine_id).one()
     if request.method == 'POST':
+        if request.form['varietal']:
+            varietal = session.query(Varietal).filter_by(name=request.form['varietal']).one()
+            print varietal.name
+            print varietal.id
+            wine.varietal_id=varietal.id
         if request.form['name']:
             wine.name = request.form['name']
         if request.form['year']:
@@ -242,20 +277,20 @@ def editWine(wine_id):
         session.commit()
         return redirect(url_for('showWine', wine_id=wine_id))
     else:
-        return render_template('editwine.html', varietals=varietals, wine=wine, loginOK=checkLogin())
+        return render_template('editwine.html', varietals=varietals, wine=wine, loginOK=checkLoginUser(wine))
 
 @app.route('/catalog/wine/<int:wine_id>/delete/', methods=['GET', 'POST'])
 def deleteWine(wine_id):
-    if not checkLogin():
-        return redirect('/login/')
     wine = session.query(Wine).filter_by(id = wine_id).one()
+    if not checkLoginUser(wine):
+        return redirect('/login/')
     print request.form
     if request.method == 'POST':
         session.delete(wine)
         session.commit()
         return redirect(url_for('showCatalog'))
     else:
-        return render_template('deletewine.html', wine=wine, loginOK=checkLogin())
+        return render_template('deletewine.html', wine=wine, loginOK=checkLoginUser(wine))
 
 if __name__ == '__main__':
     app.secret_key = 'catalog_secret_key'

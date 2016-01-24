@@ -8,7 +8,7 @@
           <h3>{{wine.name}} {{wine.year}}</h3>
           <div><h4>Description</h4></div>
           <div>{{wine.description}}</div>
-          {% if loginOK %}
+          {% if loginUserOK %}
           <br>
           <a class="modify" href="{{url_for('editWine', wine_id=wine.id)}}"><u>Edit</u> </a>
           <a class="modify" href="{{url_for('deleteWine', wine_id=wine.id)}}"><u>Delete</u> </a>
