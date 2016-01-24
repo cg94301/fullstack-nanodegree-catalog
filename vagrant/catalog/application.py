@@ -16,6 +16,9 @@ import json
 from flask import make_response
 import requests
 
+# imports for XML manipulation
+import xml.etree.ElementTree as ET
+
 CLIENT_ID = json.loads(open('client_secrets.json','r').read())['web']['client_id']
 
 app = Flask(__name__)
@@ -60,6 +63,23 @@ def getUserID(email):
         return user.id
     except:
         return None
+
+def buildXML(data,subname):
+    print data
+    root = ET.Element('catalog')
+    item = ET.SubElement(root, subname)
+    for d in data:
+        print d
+        item2 = ET.SubElement(item, 'item')
+        for k,v in d.iteritems():
+            print k
+            print v
+            subelem = ET.SubElement(item2, k)
+            subelem.text = str(v)
+        #name = ET.SubElement(item, 'name')
+        #name.text = "Pinot"
+    return (ET, root)
+    
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -223,10 +243,24 @@ def showCatalog():
 @app.route('/catalog/JSON/')
 def catalogJSON():
     varietalsobj = session.query(Varietal).all()
-    print varietalsobj
+    #print varietalsobj
     varietals=[i.serialize for i in varietalsobj]
-    print varietals
-    return jsonify(varietals=[i.serialize for i in varietalsobj])
+    #print varietals
+    output = jsonify(varietals=[i.serialize for i in varietalsobj])
+    print output
+    return output
+
+@app.route('/catalog/XML/')
+def catalogXML():
+    varietalsobj = session.query(Varietal).all()
+    varietals=[i.serialize for i in varietalsobj]
+    #print varietals
+    (ET, root) = buildXML(varietals,'varietal')
+    x = ET.tostring(root)
+    print "x: " + x
+    output = app.response_class(ET.tostring(root), mimetype='application/xml')
+    print output
+    return output
 
 @app.route('/catalog/<int:varietal_id>/')
 @app.route('/catalog/<int:varietal_id>/wines/')
@@ -243,6 +277,15 @@ def winesJSON(varietal_id):
     winesobj = session.query(Wine).filter_by(varietal_id=varietal_id).all()
     return jsonify(wines=[i.serialize for i in winesobj])
 
+@app.route('/catalog/<int:varietal_id>/wines/XML/')
+def winesXML(varietal_id):
+    winesobj = session.query(Wine).filter_by(varietal_id=varietal_id).all()
+    wines = [i.serialize for i in winesobj]
+    (ET, root) = buildXML(wines,'wine')
+    output = app.response_class(ET.tostring(root), mimetype='application/xml')
+    print output
+    return output
+
 @app.route('/catalog/wine/<int:wine_id>/')
 def showWine(wine_id):
     wine = session.query(Wine).filter_by(id=wine_id).one()
@@ -252,6 +295,16 @@ def showWine(wine_id):
 def wineJSON(wine_id):
     wineobj = session.query(Wine).filter_by(id=wine_id).one()
     return jsonify(wine=wineobj.serialize)
+
+@app.route('/catalog/wine/<int:wine_id>/XML/')
+def wineXML(wine_id):
+    wineobj = session.query(Wine).filter_by(id=wine_id).one()
+    wine = wineobj.serialize
+    print wine
+    (ET, root) = buildXML([wine], 'wine')
+    output = app.response_class(ET.tostring(root), mimetype='application/xml')
+    print output
+    return output
 
 @app.route('/catalog/add/', methods=['GET', 'POST'])
 def addWine():
