@@ -2,42 +2,42 @@
 {% block content %}
 {% include "header.html" %}
 
-      <div class="row">
-        <div class="col-sm-2"></div>
-        <div class="col-sm-8">
-          <h3>Add New Wine</h3>
+<!-- Template for adding wine -->
 
-          <!-- Every input MUST have a name -->
-          <form action="#" method="post">
-
-            <br>
-            <label for="varietal">VARIETAL</label>
-            <select class="form-control" name="varietal">
-              {% for v in varietals %}
-              <option>{{v.name}}</option>
-              {% endfor %}
-            </select>
-            <br>
-            <label for="name">NAME</label>
-            <input type="text" class="form-control" maxlength="100" name="name">
-            <br>
-            <label for="year">YEAR</label>
-            <input type="text" class="form-control" maxlength="4" name="year">
-            <br>
-            <label for="label">LABEL PICTURE (URL)</label>
-            <input type="text" class="form-control" maxlength="100" name="label" value="/static/bottle.png">
-            <br>
-            <label for="description">DESCRIPTION</label>
-            <textarea class="form-control" rows="3" name="description"></textarea>
-            <br>
-            <button class="btn btn-success" type="submit" value="Submit">Submit</button>
-            
-          </form>
-         <br>
-          <a class="cancel" href="{{url_for('showCatalog')}}">Cancel</a>
-        </div>
-      </div>
-
-
+<div class="row">
+  <div class="col-sm-2"></div>
+  <div class="col-sm-8">
+    <h3>Add New Wine</h3>
+    
+    <form action="#" method="post">
+      
+      <br>
+      <label for="varietal">VARIETAL</label>
+      <select class="form-control" name="varietal">
+        {% for v in varietals %}
+        <option>{{v.name}}</option>
+        {% endfor %}
+      </select>
+      <br>
+      <!-- Every input field MUST have a name -->
+      <label for="name">NAME</label>
+      <input type="text" class="form-control" maxlength="100" name="name">
+      <br>
+      <label for="year">YEAR</label>
+      <input type="text" class="form-control" maxlength="4" name="year">
+      <br>
+      <label for="label">LABEL PICTURE (URL)</label>
+      <input type="text" class="form-control" maxlength="100" name="label" value="/static/bottle.png">
+      <br>
+      <label for="description">DESCRIPTION</label>
+      <textarea class="form-control" rows="3" name="description"></textarea>
+      <br>
+      <button class="btn btn-success" type="submit" value="Submit">Submit</button>
+      
+    </form>
+    <br>
+    <a class="cancel" href="{{url_for('showCatalog')}}">Cancel</a>
+  </div>
+</div>
 
 {% endblock %}

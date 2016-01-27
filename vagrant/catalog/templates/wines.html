@@ -2,35 +2,35 @@
 {% block content %}
 {% include "header.html" %}
 
-      <div class="row">
-        <div class="col-sm-4 varietals">
-          <h3>Varietals</h3>
-          <div class="row">
-            <div class="col-sm-12">
-              {% for varietal in varietals %}
-              <a href="{{url_for('showWines', varietal_id=varietal.id)}}">
-                <div>{{varietal.name}}</div>
-              </a>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-8">
-          <h3><span class="selected-varietal">{{varietal.name}}</span> Selection ({{count}})</h3>
-          {% for wine in wines %}
-          <div>
-            <a href="{{url_for('showWine', wine_id=wine.id)}}">
-              {{wine.name}} {{wine.year}}
-            </a>
-          </div>
-          <div>
-            <img src="{{wine.label}}" alt="wine label goes here" style="width:120px;height:120px;">
-          </div>
-          <br>
-          {% endfor %}
-        </div>
+<!-- Template to show wines by varietal -->
+
+<div class="row">
+  <div class="col-sm-4 varietals">
+    <h3>Varietals</h3>
+    <div class="row">
+      <div class="col-sm-12">
+        {% for varietal in varietals %}
+        <a href="{{url_for('showWines', varietal_id=varietal.id)}}">
+          <div>{{varietal.name}}</div>
+        </a>
+        {% endfor %}
       </div>
+    </div>
+  </div>
+  <div class="col-sm-8">
+    <h3><span class="selected-varietal">{{varietal.name}}</span> Selection ({{count}})</h3>
+    {% for wine in wines %}
+    <div>
+      <a href="{{url_for('showWine', wine_id=wine.id)}}">
+        {{wine.name}} {{wine.year}}
+      </a>
+    </div>
+    <div>
+      <img src="{{wine.label}}" alt="wine label goes here" style="width:120px;height:120px;">
+    </div>
+    <br>
+    {% endfor %}
+  </div>
+</div>
 
 {% endblock %}
-http://localhost:5000/catalog/1/wines/static/647389le.png
-http://localhost:5000/static/158729le.png

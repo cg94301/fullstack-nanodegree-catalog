@@ -2,47 +2,46 @@
 {% block content %}
 {% include "header.html" %}
 
-      <div class="row">
-        <div class="col-sm-2"></div>
-        <div class="col-sm-8">
-          <h3>Edit Wine</h3>
+<!-- Template for editing wine -->
 
-          <!-- Every input MUST have a name -->
-          <form action="#" method="post">
+<div class="row">
+  <div class="col-sm-2"></div>
+  <div class="col-sm-8">
+    <h3>Edit Wine</h3>
+    
+    <form action="#" method="post">      
+      <br>
+      <label for="varietal">VARIETAL</label>
+      <select class="form-control" name="varietal">
+        {% for v in varietals %}
+        {% if v.id == wine.varietal_id %}
+        <option selected>{{v.name}}</option>
+        {% else %}
+        <option>{{v.name}}</option>
+        {% endif %}
+        {% endfor %}
+      </select>
+      <br>
+      <!-- Every input MUST have a name -->
+      <label for="name">NAME</label>
+      <input type="text" class="form-control" maxlength="100" name="name" value="{{wine.name}}">
+      <br>
+      <label for="year">YEAR</label>
+      <input type="text" class="form-control" maxlength="4" name="year" value="{{wine.year}}">
+      <br>
+      <label for="label">LABEL PICTURE (URL)</label>
+      <input type="text" class="form-control" maxlength="100" name="label" value="{{wine.label}}">
+      <br>
+      <label for="description">DESCRIPTION</label>
+      <textarea class="form-control" rows="3" name="description">{{wine.description}}</textarea>
+      <br>
+      <button class="btn btn-success" type="submit" value="Submit">Submit</button>
+    </form>
 
-            <br>
-            <label for="varietal">VARIETAL</label>
-            <select class="form-control" name="varietal">
-              {% for v in varietals %}
-              {% if v.id == wine.varietal_id %}
-              <option selected>{{v.name}}</option>
-              {% else %}
-              <option>{{v.name}}</option>
-              {% endif %}
-              {% endfor %}
-            </select>
-            <br>
-            <label for="name">NAME</label>
-            <input type="text" class="form-control" maxlength="100" name="name" value="{{wine.name}}">
-            <br>
-            <label for="year">YEAR</label>
-            <input type="text" class="form-control" maxlength="4" name="year" value="{{wine.year}}">
-            <br>
-            <label for="label">LABEL PICTURE (URL)</label>
-            <input type="text" class="form-control" maxlength="100" name="label" value="{{wine.label}}">
-            <br>
-            <label for="description">DESCRIPTION</label>
-            <textarea class="form-control" rows="3" name="description">{{wine.description}}</textarea>
-            <br>
-            <button class="btn btn-success" type="submit" value="Submit">Submit</button>
-            
-          </form>
-          <br>
-          <a class="cancel" href="{{url_for('showWine', wine_id=wine.id)}}">Cancel</a>
-
-        </div>
-      </div>
-
-
+    <br>
+    <a class="cancel" href="{{url_for('showWine', wine_id=wine.id)}}">Cancel</a>
+    
+  </div>
+</div>
 
 {% endblock %}

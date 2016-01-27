@@ -2,22 +2,24 @@
 {% block content %}
 {% include "header.html" %}
 
-      <div class="row">
-        <div class="col-sm-2"></div>
-        <div class="col-sm-8">
-          <h3>{{wine.name}} {{wine.year}}</h3>
-          <div><h4>Description</h4></div>
-          <div>{{wine.description}}</div>
-          {% if loginUserOK %}
-          <br>
-          <a class="modify" href="{{url_for('editWine', wine_id=wine.id)}}"><u>Edit</u> </a>
-          <a class="modify" href="{{url_for('deleteWine', wine_id=wine.id)}}"><u>Delete</u> </a>
-          <br>
-          {% endif %}
-          <br>
-          <a href="{{url_for('showWines', varietal_id=wine.varietal.id)}}">Back to {{wine.varietal.name}}</a>
-        </div>
-        <div class="col-sm-2"></div>
-      </div>
+<!-- Template for wine description -->
+
+<div class="row">
+  <div class="col-sm-2"></div>
+  <div class="col-sm-8">
+    <h3>{{wine.name}} {{wine.year}}</h3>
+    <div><h4>Description</h4></div>
+    <div>{{wine.description}}</div>
+    {% if loginUserOK %}
+    <br>
+    <a class="modify" href="{{url_for('editWine', wine_id=wine.id)}}"><u>Edit</u> </a>
+    <a class="modify" href="{{url_for('deleteWine', wine_id=wine.id)}}"><u>Delete</u> </a>
+    <br>
+    {% endif %}
+    <br>
+    <a href="{{url_for('showWines', varietal_id=wine.varietal.id)}}">Back to {{wine.varietal.name}}</a>
+  </div>
+  <div class="col-sm-2"></div>
+</div>
 
 {% endblock %}

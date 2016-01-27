@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+# Table to track log in user and wine ownership
 class User(Base):
     __tablename__= 'user'
 
@@ -13,6 +14,7 @@ class User(Base):
     email = Column(String(80), nullable=False)
     picture = Column(String(250))
 
+# Table for available varietals
 class Varietal(Base):
     __tablename__='varietal'
     
@@ -27,6 +29,7 @@ class Varietal(Base):
            'name' : self.name,
        }
 
+# Table for wine
 class Wine(Base):
     __tablename__='wine'
     

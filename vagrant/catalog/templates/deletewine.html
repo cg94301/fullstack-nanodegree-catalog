@@ -2,20 +2,22 @@
 {% block content %}
 {% include "header.html" %}
 
-      <div class="row">
-        <div class="col-sm-2"></div>
-        <div class="col-sm-8">
-          <h3><mark>DELETE</mark> {{wine.name}} {{wine.year}} ?</h3>
-          <div><h4>Description</h4></div>
-          <div>{{wine.description}}</div>
-          <br>
-          <form action="#" method="post">
-            <button type="submit" class="btn btn-warning delete" id="submit" type="submit">Delete</button>
-          </form>
-          <br>
-          <a class="cancel" href="{{url_for('showWine', wine_id=wine.id)}}">Cancel</a>
-        </div>
-        <div class="col-sm-2"></div>
-      </div>
+<!-- Template for deleting wine -->
+
+<div class="row">
+  <div class="col-sm-2"></div>
+  <div class="col-sm-8">
+    <h3><mark>DELETE</mark> {{wine.name}} {{wine.year}} ?</h3>
+    <div><h4>Description</h4></div>
+    <div>{{wine.description}}</div>
+    <br>
+    <form action="#" method="post">
+      <button type="submit" class="btn btn-warning delete" id="submit" type="submit">Delete</button>
+    </form>
+    <br>
+    <a class="cancel" href="{{url_for('showWine', wine_id=wine.id)}}">Cancel</a>
+  </div>
+  <div class="col-sm-2"></div>
+</div>
 
 {% endblock %}

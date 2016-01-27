@@ -1,3 +1,5 @@
+# Run this script to add wines to the DB
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dbinit import Base, Varietal, Wine, User
