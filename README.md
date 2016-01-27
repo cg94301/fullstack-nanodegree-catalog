@@ -2,11 +2,14 @@
 
 ## Description
 
-This project implements an application that provides a list of items within a variety of categories as well as provide a user registration and authentication system. Registered users will have the ability to post, edit and delete their own items. This app resembles a wine collection.
+This project implements an application that provides a list of items within a variety of categories as well as provide a user registration and authentication system. Registered users will have the ability to post, edit and delete their own items. Specifically this app manages a wine collection.
 
 ## How to Start
 
 This project assumes that you have Vagrant installed on your machine. These instructions are for OSX or Unix host.
+
+* Execute below instruction in a shell on your host machine:
+
 
 ```
     host$ git clone https://github.com/cg94301/fullstack-nanodegree-catalog.git
@@ -22,27 +25,24 @@ This project assumes that you have Vagrant installed on your machine. These inst
 
 The Vagrant VM relays the application at http://localhost:5000/ to your local machine. Open your browser of choice on your host platform and go to this URL.
 
+* Go to http://localhost:5000/:
+
 ![catalog app top](catalog.png)
 
-Click on any of the varietals in the left column to select all wines in that varietal.
+* Click on any of the varietals in the left column to select all wines in that varietal:
 
 ![catalog app wines by varietal](catalog-wines.png)
 
-Click on any of the listed wines to get its description.
+* Click on any of the listed wines to get its description:
 
 ![catalog app wine description](catalog-wine.png)
 
 
-To exit the project:
-
-```
-    vagrant@vagrant-ubuntu-trusty-32$> exit
-    host$> vagrant halt
-```
-
 ## API endpoints
 
 ### JSON API endpoints
+
+* You can point your browser to below JSON API endpoints:
 
 http://localhost:5000/catalog/JSON/
 
@@ -64,6 +64,8 @@ http://localhost:5000/catalog/wine/1/JSON/
 ```
 
 ### XML API endpoints
+
+* You can point your browser to below XML API endpoints:
 
 http://localhost:5000/catalog/XML/
 
@@ -91,6 +93,8 @@ http://localhost:5000/catalog/wine/1/XML/
 
 You need a file called client_secrects.json in the vagrant/catalog directory. This file has the credentials for Google OAuth2 API. You need to go to developers.google.com and create your own OAuth2 API project. That's because you need your own client_id, client_secret and project_id of your choice. Udacity OAuth class walks you through the process.
 
+* Get your Google+ OAuth API credentials and download them in JSON format:
+
 ```
 {"web": {"client_id":"YOUR_CLIENT_ID",
         "project_id":"YOUR_PROJECT_ID",
@@ -104,11 +108,13 @@ You need a file called client_secrects.json in the vagrant/catalog directory. Th
 
 Once this file is present you can login via Google+ OAuth. You should see page like below once logged in. Notice the 'Add wine' option which allows you to create your own entry for a wine.
 
+* Log into the app:
+
 ![catalog app top logged in](catalog-loggedin.png)
 
 ### Create
 
-Go ahead and create your own wine.
+* Go ahead and create your own wine:
 
 ![catalog app add wine](catalog-add.png)
 
@@ -116,16 +122,27 @@ Go ahead and create your own wine.
 
 Now that you have created your own wine you can also edit it. 
 
+* Notice the options for 'edit' and 'delete' that showed up:
+
 ![catalog app edit and delete wine option](catalog-editdelete.png)
 
-Select the wine you just created and click on the 'Edit' option.
+* Select the wine you just created and click on the 'Edit' option:
 
 ![catalog app edit wine](catalog-edit.png)
 
 ### Delete
 
-Selecting 'Delete' instead allows you to delete the wine you created.
+* Selecting 'Delete' instead allows you to delete the wine you created:
 
 ![catalog app delete wine](catalog-delete.png)
 
-When done editing click on 'Logout' to log out of the app.
+## Wrap Up and Exit
+
+* When done editing click on 'Logout' to log out of the app.
+
+* Execute these commands in your shell when ready to exit:
+
+```
+    vagrant$ exit
+    host$ vagrant halt
+```
