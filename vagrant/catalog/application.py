@@ -28,6 +28,7 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+# Helper functions to check login status
 def checkLogin():
     if 'username' in login_session:
         return True
@@ -64,50 +65,36 @@ def getUserID(email):
     except:
         return None
 
+# Helper function to build XML tree
 def buildXML(data,subname):
-    print data
     root = ET.Element('catalog')
-    item = ET.SubElement(root, subname)
     for d in data:
-        print d
-        item2 = ET.SubElement(item, 'item')
+        wine = ET.SubElement(root, 'wine')
         for k,v in d.iteritems():
-            print k
-            print v
-            subelem = ET.SubElement(item2, k)
+            subelem = ET.SubElement(wine, k)
             subelem.text = str(v)
-        #name = ET.SubElement(item, 'name')
-        #name.text = "Pinot"
     return (ET, root)
     
 
+# Route section
+
+# Google+ OAuth API will post to this route
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
-    print "login_session: "
-    print login_session
     # prevent cross-site reference forgery attack
-    print "request state:"
-    print request
-    print request.args.get('state')
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     # Obtain authorization code
     code = request.data
-    print "code: " + code
 
     try:
         # Upgrade the authorization code into a credentials object
-        print "oauth_flow start"
         oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
-        print "oauth_flow:"
-        print oauth_flow
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
-        print "credentials: "
-        print credentials
     except FlowExchangeError:
         response = make_response(json.dumps('Failed to upgrade the authorization code.'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -115,13 +102,9 @@ def gconnect():
 
     # Check that the access token is valid.
     access_token = credentials.access_token
-    print "access_token: "
-    print access_token
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s' % access_token)
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1])
-    print "result: "
-    print result
     # If there was an error in the access token info, abort.
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get('error')), 500)
@@ -151,7 +134,6 @@ def gconnect():
         return response
 
     # Store the access token in the session for later use.
-    #login_session['credentials'] = credentials
     login_session['credentials'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
 
@@ -161,8 +143,6 @@ def gconnect():
     answer = requests.get(userinfo_url, params=params)
 
     data = answer.json()
-    print "data: "
-    print data
 
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
@@ -181,36 +161,20 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    print "login_session: "
-    print login_session
-    print "done!"
     return output
 
+# Route to log out of the app
 @app.route('/gdisconnect/')
 def gdisconnect():
-    print "disconnect"
-    print "login_session: "
-    print login_session
-    #access_token = login_session['access_token']
     access_token = login_session['credentials']
-    print 'In gdisconnect access token is %s', access_token
-    print 'User name is: ' 
-    print login_session['username']
     if access_token is None:
- 	print 'Access Token is None'
     	response = make_response(json.dumps('Current user not connected.'), 401)
     	response.headers['Content-Type'] = 'application/json'
     	return response
-    #url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
-    print "access token:"
-    print login_session['credentials']
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['credentials']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
-    print 'result is '
-    print result
     if result['status'] == '200':
-	#del login_session['access_token'] 
 	del login_session['credentials'] 
     	del login_session['gplus_id']
     	del login_session['username']
@@ -224,6 +188,7 @@ def gdisconnect():
     	response.headers['Content-Type'] = 'application/json'
     	return response
 
+# Route to log into the app
 @app.route('/login/')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
@@ -240,43 +205,41 @@ def showCatalog():
     wines = session.query(Wine).order_by(Wine.id.desc()).limit(varietalcount)
     return render_template('catalog.html', varietals=varietals, wines=wines, loginOK=checkLogin())
 
+# JSON endpoint for varietals
 @app.route('/catalog/JSON/')
 def catalogJSON():
     varietalsobj = session.query(Varietal).all()
-    #print varietalsobj
     varietals=[i.serialize for i in varietalsobj]
-    #print varietals
     output = jsonify(varietals=[i.serialize for i in varietalsobj])
-    print output
     return output
 
+# XML endpoint for varietals
 @app.route('/catalog/XML/')
 def catalogXML():
     varietalsobj = session.query(Varietal).all()
     varietals=[i.serialize for i in varietalsobj]
-    #print varietals
     (ET, root) = buildXML(varietals,'varietal')
     x = ET.tostring(root)
-    print "x: " + x
     output = app.response_class(ET.tostring(root), mimetype='application/xml')
-    print output
     return output
 
+# Show wines by varietal
 @app.route('/catalog/<int:varietal_id>/')
 @app.route('/catalog/<int:varietal_id>/wines/')
 def showWines(varietal_id):
-    #varietals = session.query(Varietal).filter(Varietal.id != varietal_id).all()
     varietals = session.query(Varietal).all()
     varietal = session.query(Varietal).filter_by(id = varietal_id).one()
     wines = session.query(Wine).filter_by(varietal_id=varietal_id).all()
     count = session.query(Wine).filter_by(varietal_id=varietal_id).count()
     return render_template('wines.html', varietals=varietals, varietal=varietal, wines=wines, count=count, loginOK=checkLogin())
 
+# JSON endpoint for wines by varietal
 @app.route('/catalog/<int:varietal_id>/wines/JSON/')
 def winesJSON(varietal_id):
     winesobj = session.query(Wine).filter_by(varietal_id=varietal_id).all()
     return jsonify(wines=[i.serialize for i in winesobj])
 
+# XML endpoint for wines by varietal
 @app.route('/catalog/<int:varietal_id>/wines/XML/')
 def winesXML(varietal_id):
     winesobj = session.query(Wine).filter_by(varietal_id=varietal_id).all()
@@ -285,6 +248,7 @@ def winesXML(varietal_id):
     output = app.response_class(ET.tostring(root), mimetype='application/xml')
     print output
     return output
+
 
 @app.route('/catalog/wine/<int:wine_id>/')
 def showWine(wine_id):
