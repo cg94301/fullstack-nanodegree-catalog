@@ -17,7 +17,7 @@ class User(Base):
 # Table for available varietals
 class Varietal(Base):
     __tablename__='varietal'
-    
+
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
 
@@ -32,7 +32,7 @@ class Varietal(Base):
 # Table for wine
 class Wine(Base):
     __tablename__='wine'
-    
+
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
     year = Column(Integer)

@@ -11,7 +11,7 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 userptr = User(name="Joe Red", email="joered@example.com", picture="https://upload.wikimedia.org/wikipedia/commons/5/5f/Rilley_elf_south_park_avatar.png")
-session.add(userptr) 
+session.add(userptr)
 session.commit()
 
 varietalptr = Varietal(name = "Cabernet Sauvignon")
