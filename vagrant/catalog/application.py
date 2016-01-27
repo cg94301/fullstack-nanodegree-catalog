@@ -246,37 +246,35 @@ def winesXML(varietal_id):
     wines = [i.serialize for i in winesobj]
     (ET, root) = buildXML(wines,'wine')
     output = app.response_class(ET.tostring(root), mimetype='application/xml')
-    print output
     return output
 
-
+# Show wine description
 @app.route('/catalog/wine/<int:wine_id>/')
 def showWine(wine_id):
     wine = session.query(Wine).filter_by(id=wine_id).one()
     return render_template('description.html', wine=wine, loginOK=checkLogin(), loginUserOK=checkLoginUser(wine))
 
+# Wine description JSON endpoint
 @app.route('/catalog/wine/<int:wine_id>/JSON/')
 def wineJSON(wine_id):
     wineobj = session.query(Wine).filter_by(id=wine_id).one()
     return jsonify(wine=wineobj.serialize)
 
+# Wine description XML endpoint
 @app.route('/catalog/wine/<int:wine_id>/XML/')
 def wineXML(wine_id):
     wineobj = session.query(Wine).filter_by(id=wine_id).one()
     wine = wineobj.serialize
-    print wine
     (ET, root) = buildXML([wine], 'wine')
     output = app.response_class(ET.tostring(root), mimetype='application/xml')
-    print output
     return output
 
+# Add wine when logged in
 @app.route('/catalog/add/', methods=['GET', 'POST'])
 def addWine():
     if not checkLogin():
         return redirect('/login/')
     if request.method == 'POST':
-        print "POST"
-        print request.form
         varietal = session.query(Varietal).filter_by(name=request.form['varietal']).one()
         newWine = Wine(name=request.form['name'], year=request.form['year'], description=request.form['description'],
                        label=request.form['label'],varietal_id=varietal.id, user_id=login_session['user_id'])
@@ -287,6 +285,7 @@ def addWine():
         varietals = session.query(Varietal).all()
         return render_template('addwine.html', varietals=varietals, loginOK=checkLogin())
 
+# Edit wine when logged in
 @app.route('/catalog/wine/<int:wine_id>/edit/', methods=['GET', 'POST'])
 def editWine(wine_id):
     wine = session.query(Wine).filter_by(id = wine_id).one()
@@ -296,8 +295,6 @@ def editWine(wine_id):
     if request.method == 'POST':
         if request.form['varietal']:
             varietal = session.query(Varietal).filter_by(name=request.form['varietal']).one()
-            print varietal.name
-            print varietal.id
             wine.varietal_id=varietal.id
         if request.form['name']:
             wine.name = request.form['name']
@@ -313,12 +310,12 @@ def editWine(wine_id):
     else:
         return render_template('editwine.html', varietals=varietals, wine=wine, loginOK=checkLoginUser(wine))
 
+# Delete wine
 @app.route('/catalog/wine/<int:wine_id>/delete/', methods=['GET', 'POST'])
 def deleteWine(wine_id):
     wine = session.query(Wine).filter_by(id = wine_id).one()
     if not checkLoginUser(wine):
         return redirect('/login/')
-    print request.form
     if request.method == 'POST':
         session.delete(wine)
         session.commit()
