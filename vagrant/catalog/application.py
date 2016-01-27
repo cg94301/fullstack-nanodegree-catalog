@@ -53,8 +53,6 @@ def createUser(login_session):
 def getUserInfo(user_id):
     users = session.query(User).all()
     names = [(u.name, u.id) for u in users]
-    print names
-    print user_id
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
