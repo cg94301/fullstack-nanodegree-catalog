@@ -19,11 +19,11 @@ import requests
 # imports for XML manipulation
 import xml.etree.ElementTree as ET
 
-CLIENT_ID = json.loads(open('client_secrets.json','r').read())['web']['client_id']
+CLIENT_ID = json.loads(open('/var/www/catalog/client_secrets.json','r').read())['web']['client_id']
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///redwines.db')
+engine = create_engine('sqlite:////var/www/catalog/redwines.db?check_same_thread=False')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -90,7 +90,7 @@ def gconnect():
 
     try:
         # Upgrade the authorization code into a credentials object
-        oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
+        oauth_flow = flow_from_clientsecrets('/var/www/catalog/client_secrets.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:

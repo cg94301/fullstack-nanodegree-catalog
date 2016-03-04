@@ -56,5 +56,5 @@ class Wine(Base):
        }
 
 
-engine = create_engine('sqlite:///redwines.db')
+engine = create_engine('sqlite:////var/www/catalog/redwines.db')
 Base.metadata.create_all(engine)
