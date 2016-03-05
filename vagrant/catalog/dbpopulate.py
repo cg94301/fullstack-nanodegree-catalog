@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dbinit import Base, Varietal, Wine, User
 
-engine = create_engine('sqlite:///redwines.db')
+engine = create_engine('postgresql://catalog:caTal0g@localhost:5432/catalog')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)

@@ -23,7 +23,7 @@ CLIENT_ID = json.loads(open('/var/www/catalog/client_secrets.json','r').read())[
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:////var/www/catalog/redwines.db?check_same_thread=False')
+engine = create_engine('postgresql://catalog:caTal0g@localhost:5432/catalog')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()

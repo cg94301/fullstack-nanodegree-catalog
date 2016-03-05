@@ -56,5 +56,5 @@ class Wine(Base):
        }
 
 
-engine = create_engine('sqlite:////var/www/catalog/redwines.db')
+engine = create_engine('postgresql://catalog:caTal0g@localhost:5432/catalog')
 Base.metadata.create_all(engine)
